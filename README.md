@@ -8,7 +8,7 @@
 
 | 工位 | 做什么 | 交付 |
 | --- | --- | --- |
-| ① 体检 | 十项扫描：合并单元格、日期乱、数字夹字、一格多信息、空格、重复行、表头问题、跨表命名 | `_体检标注.xlsx`（填色+批注）、`_体检报告.md` |
+| ① 体检 | 十项扫描：合并单元格、日期乱、数字夹字、一格多信息、空格、重复行、表头问题、跳表命名 | `_体检标注.xlsx`（填色+批注）、`_体检报告.md` |
 | ② 整理 | 按体检结果逐项修复，只改副本；业务口径先问再动 | `_已整理.xlsx`、`变更日志.md` |
 | ③ 统计 | 挖出该统计什么 → 写一句可复制的统计指令 → 公式落地到新 sheet | `_统计结果.xlsx`（SUMIFS/RANK/SHARE 全公式，改数自动重算） |
 | ④ 分析报告 | 五段固定结构 + 折线/条形/环形图表，结论先行 | `.docx`（蓝白 / 红白两套色系） |
@@ -69,7 +69,7 @@ pip3 install openpyxl python-docx matplotlib
 │   ├── inspect_workbook.py       # 读表体检：字段/类型/空值/唯一键/合计行
 │   ├── table_check.py            # 十项扫描 + 标注副本 + 体检报告
 │   ├── sheet_fix.py              # clone / unmerge-fill / mark / audit
-│   ├─��� add_stats_sheet.py        # 按 spec 生成公式版统计 sheet（--check 自检）
+│   ├── add_stats_sheet.py        # 按 spec 生成公式版统计 sheet（--check 自检）
 │   ├── recalc_values.sh          # LibreOffice 把公式结果缓存进文件
 │   ├── build_report_docx.py      # JSON → Word 报告
 │   └── build_dashboard.py        # JSON → 单文件 HTML 看板
