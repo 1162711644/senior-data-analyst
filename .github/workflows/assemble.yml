@@ -19,17 +19,16 @@ jobs:
           set -euo pipefail
           fetch() {
             repo="$1"; src="$2"; dst="$3"
-            if [ ! -d "/tmp/${repo}" ]; then
+            if [ ! -f "/tmp/${repo}.tgz" ]; then
               curl -sL "https://codeload.github.com/1162711644/${repo}/tar.gz/refs/heads/main" -o "/tmp/${repo}.tgz"
+              rm -rf "/tmp/${repo}"
+              mkdir -p "/tmp/${repo}"
               tar xzf "/tmp/${repo}.tgz" -C "/tmp/${repo}" --strip-components=1
             fi
+            test -f "/tmp/${repo}/${src}"
             mkdir -p "$(dirname "${dst}")"
-            cp "${src}" "${dst}"
+            cp "/tmp/${repo}/${src}" "${dst}"
           }
-
-          for r in lengmeng-table-check lengmeng-data-cleanup lengmeng-stats-mining lengmeng-work-report-skill lengmeng-dashboard-skill; do
-            mkdir -p "/tmp/${r}"
-          done
 
           fetch lengmeng-table-check scripts/table_check.py "资深数据分析师/scripts/table_check.py"
           fetch lengmeng-data-cleanup lengmeng-data-cleanup/scripts/sheet_fix.py "资深数据分析师/scripts/sheet_fix.py"
