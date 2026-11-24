@@ -19,38 +19,43 @@ jobs:
           set -euo pipefail
           fetch() {
             repo="$1"; src="$2"; dst="$3"
-            curl -sL "https://codeload.github.com/1162711644/${repo}/tar.gz/refs/heads/main" -o "/tmp/${repo}.tgz"
-            mkdir -p "/tmp/${repo}"
-            tar xzf "/tmp/${repo}.tgz" -C "/tmp/${repo}" --strip-components=1
+            if [ ! -d "/tmp/${repo}" ]; then
+              curl -sL "https://codeload.github.com/1162711644/${repo}/tar.gz/refs/heads/main" -o "/tmp/${repo}.tgz"
+              tar xzf "/tmp/${repo}.tgz" -C "/tmp/${repo}" --strip-components=1
+            fi
             mkdir -p "$(dirname "${dst}")"
-            cp "/tmp/${repo}/${src}" "${dst}"
+            cp "${src}" "${dst}"
           }
 
-          fetch lengmeng-table-check        scripts/table_check.py            "资深数据分析师/scripts/table_check.py"
-          fetch lengmeng-data-cleanup       scripts/sheet_fix.py              "资深数据分析师/scripts/sheet_fix.py"
-          fetch lengmeng-data-cleanup       references/openpyxl-recipes.md    "资深数据分析师/references/02a-openpyxl-recipes.md"
-          fetch lengmeng-data-cleanup       references/change-log-template.md "资深数据分析师/references/02b-变更日志模板.md"
-          fetch lengmeng-stats-mining       scripts/inspect_workbook.py       "资深数据分析师/scripts/inspect_workbook.py"
-          fetch lengmeng-stats-mining       scripts/add_stats_sheet.py        "资深数据分析师/scripts/add_stats_sheet.py"
-          fetch lengmeng-stats-mining       scripts/recalc_values.sh          "资深数据分析师/scripts/recalc_values.sh"
-          fetch lengmeng-stats-mining       references/single-table-prompt.md "资深数据分析师/references/single-table-prompt.md"
-          fetch lengmeng-stats-mining       references/multi-table-prompt.md  "资深数据分析师/references/multi-table-prompt.md"
-          fetch lengmeng-stats-mining       references/formula-recipes.md     "资深数据分析师/references/formula-recipes.md"
-          fetch lengmeng-work-report-skill  scripts/build_report_docx.py      "资深数据分析师/scripts/build_report_docx.py"
-          fetch lengmeng-work-report-skill  references/analysis-playbook.md   "资深数据分析师/references/analysis-playbook.md"
-          fetch lengmeng-work-report-skill  references/docx-spec.md           "资深数据分析师/references/docx-spec.md"
-          fetch lengmeng-dashboard-skill    scripts/build_dashboard.py        "资深数据分析师/scripts/build_dashboard.py"
-          fetch lengmeng-dashboard-skill    assets/dashboard-template.html    "资深数据分析师/assets/dashboard-template.html"
-          fetch lengmeng-dashboard-skill    references/chart-and-layout-rules.md "资深数据分析师/references/chart-and-layout-rules.md"
-          fetch lengmeng-dashboard-skill    references/style-presets.md        "资深数据分析师/references/style-presets.md"
-          fetch lengmeng-dashboard-skill    references/spec-format.md          "资深数据分析师/references/spec-format.md"
+          for r in lengmeng-table-check lengmeng-data-cleanup lengmeng-stats-mining lengmeng-work-report-skill lengmeng-dashboard-skill; do
+            mkdir -p "/tmp/${r}"
+          done
+
+          fetch lengmeng-table-check scripts/table_check.py "资深数据分析师/scripts/table_check.py"
+          fetch lengmeng-data-cleanup lengmeng-data-cleanup/scripts/sheet_fix.py "资深数据分析师/scripts/sheet_fix.py"
+          fetch lengmeng-data-cleanup lengmeng-data-cleanup/references/openpyxl-recipes.md "资深数据分析师/references/02a-openpyxl-recipes.md"
+          fetch lengmeng-data-cleanup lengmeng-data-cleanup/references/change-log-template.md "资深数据分析师/references/02b-变更日志模板.md"
+          fetch lengmeng-stats-mining scripts/inspect_workbook.py "资深数据分析师/scripts/inspect_workbook.py"
+          fetch lengmeng-stats-mining scripts/add_stats_sheet.py "资深数据分析师/scripts/add_stats_sheet.py"
+          fetch lengmeng-stats-mining scripts/recalc_values.sh "资深数据分析师/scripts/recalc_values.sh"
+          fetch lengmeng-stats-mining references/single-table-prompt.md "资深数据分析师/references/single-table-prompt.md"
+          fetch lengmeng-stats-mining references/multi-table-prompt.md "资深数据分析师/references/multi-table-prompt.md"
+          fetch lengmeng-stats-mining references/formula-recipes.md "资深数据分析师/references/formula-recipes.md"
+          fetch lengmeng-work-report-skill scripts/build_report_docx.py "资深数据分析师/scripts/build_report_docx.py"
+          fetch lengmeng-work-report-skill references/analysis-playbook.md "资深数据分析师/references/analysis-playbook.md"
+          fetch lengmeng-work-report-skill references/docx-spec.md "资深数据分析师/references/docx-spec.md"
+          fetch lengmeng-dashboard-skill scripts/build_dashboard.py "资深数据分析师/scripts/build_dashboard.py"
+          fetch lengmeng-dashboard-skill assets/dashboard-template.html "资深数据分析师/assets/dashboard-template.html"
+          fetch lengmeng-dashboard-skill references/chart-and-layout-rules.md "资深数据分析师/references/chart-and-layout-rules.md"
+          fetch lengmeng-dashboard-skill references/style-presets.md "资深数据分析师/references/style-presets.md"
+          fetch lengmeng-dashboard-skill references/spec-format.md "资深数据分析师/references/spec-format.md"
 
           chmod +x 资深数据分析师/scripts/*.sh || true
 
       - name: Normalize branding
         run: |
           set -euo pipefail
-          for f in $(find 资深数据分析师 -type f \( -name '*.py' -o -name '*.md' -o -name '*.sh' \)); do
+          for f in $(find 资深数据分析师 -name '*.py' -o -name '*.md' -o -name '*.sh'); do
             sed -i \
               -e 's/冷檬数据表格检查/资深数据分析师·数据体检/g' \
               -e 's/冷檬表格体检/资深数据分析师·数据体检/g' \
@@ -66,5 +71,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           git diff --cached --quiet && { echo "nothing to commit"; exit 0; }
-          git commit -m "chore: 汇总五工位脚本与参考资料（逐字取自同源公开仓库）"
+          git commit -m "chore: 汇总五工位脚本与参考资料"
           git push
